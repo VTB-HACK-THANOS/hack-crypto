@@ -3,6 +3,7 @@ package api
 import (
 	"net/http"
 
+	"github.com/VTB-HACK-THANOS/hack-crypto/models"
 	"github.com/labstack/echo/v4"
 )
 
@@ -54,7 +55,14 @@ func (s *Server) handleRegistration(ctx echo.Context) error {
 	}
 
 	if err := s.UserManagementService.RegisterUser(ctx.Request().Context(), req.Email, req.Password); err != nil {
-		return ctx.String(http.StatusInternalServerError, "failed to register new user")
+		switch err.(type) {
+		case models.ForbiddenError:
+			return ctx.String(http.StatusForbidden, "forbidden")
+		case models.AlreadyExistsError:
+			return ctx.String(http.StatusForbidden, "already exists")
+		default:
+			return ctx.String(http.StatusInternalServerError, "failed to register new user")
+		}
 	}
 
 	return ctx.JSON(http.StatusOK, nil)

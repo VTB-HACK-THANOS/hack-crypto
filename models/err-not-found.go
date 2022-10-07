@@ -4,6 +4,6 @@ package models
 type NotFoundError struct{}
 
 // Error inheritdoc.
-func (*NotFoundError) Error() string {
+func (NotFoundError) Error() string {
 	return "not found"
 }

@@ -4,6 +4,6 @@ package models
 type ForbiddenError struct{}
 
 // Error inheritdoc.
-func (*ForbiddenError) Error() string {
+func (ForbiddenError) Error() string {
 	return "forbidden"
 }
