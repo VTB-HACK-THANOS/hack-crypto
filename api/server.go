@@ -29,7 +29,7 @@ func New(
 	rlBurst int,
 ) *Server {
 	e := echo.New()
-	e.HideBanner = true
+	e.HideBanner = false
 	e.HidePort = false
 
 	s := &Server{

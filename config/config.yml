@@ -3,7 +3,7 @@ app:
   addr: 0.0.0.0:8000
 postgres:
   addr: localhost:5432
-  name: canada-application
+  name: crypto
   user: postgres
   pass: postgres
   pool: 10
