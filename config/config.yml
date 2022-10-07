@@ -1,0 +1,13 @@
+app:
+  environment: dev
+  addr: 0.0.0.0:8000
+postgres:
+  addr: localhost:5432
+  name: canada-application
+  user: postgres
+  pass: postgres
+  pool: 10
+rateLimiter:
+  rate: 1s
+  burst: 1
+  expiresIn: 1m
