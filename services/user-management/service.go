@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/anthonyaspen/emlvid-back/models"
-	"github.com/anthonyaspen/emlvid-back/services/utils"
+	"github.com/VTB-HACK-THANOS/hack-crypto/models"
+	"github.com/VTB-HACK-THANOS/hack-crypto/services/utils"
 )
 
 const (

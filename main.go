@@ -7,10 +7,11 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/anthonyaspen/emlvid-back/api"
-	"github.com/anthonyaspen/emlvid-back/services/auth"
-	userManagement "github.com/anthonyaspen/emlvid-back/services/user-management"
-	"github.com/anthonyaspen/emlvid-back/storage"
+	"github.com/VTB-HACK-THANOS/hack-crypto/api"
+	"github.com/VTB-HACK-THANOS/hack-crypto/services/auth"
+	userManagement "github.com/VTB-HACK-THANOS/hack-crypto/services/user-management"
+	"github.com/VTB-HACK-THANOS/hack-crypto/storage"
+
 	"github.com/golobby/config/v3"
 	"github.com/golobby/config/v3/pkg/feeder"
 )

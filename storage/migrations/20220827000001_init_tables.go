@@ -48,7 +48,8 @@ func init() {
 			INSERT INTO public.users (email, "password", job_title, "name") VALUES('tester@test.ru', '$2a$04$oLlN7LTjl8ftPmzq0EXSPugUez7MGPEWJWs0Fnjf1xLQlokmpIs1S', NULL, NULL);
 
 			INSERT INTO public.roles (id, "name") VALUES(1, 'user');
-      INSERT INTO public.roles (id, "name") VALUES(2, 'admin');
+      INSERT INTO public.roles (id, "name") VALUES(2, 'manager');
+      INSERT INTO public.roles (id, "name") VALUES(3, 'admin');
 
 			INSERT INTO public.user_roles (user_email, role_id) VALUES('tester@test.ru', 2);
      `)

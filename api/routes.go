@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/anthonyaspen/emlvid-back/models"
+	"github.com/VTB-HACK-THANOS/hack-crypto/models"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )

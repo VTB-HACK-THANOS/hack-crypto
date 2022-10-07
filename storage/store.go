@@ -6,7 +6,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/anthonyaspen/emlvid-back/storage/migrations"
+	"github.com/VTB-HACK-THANOS/hack-crypto/storage/migrations"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 	"github.com/uptrace/bun/driver/pgdriver"

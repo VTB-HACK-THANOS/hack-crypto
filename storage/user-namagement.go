@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/anthonyaspen/emlvid-back/models"
+	"github.com/VTB-HACK-THANOS/hack-crypto/models"
 )
 
 // User returns a user by email.

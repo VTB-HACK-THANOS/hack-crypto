@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 
-	"github.com/anthonyaspen/emlvid-back/models"
+	"github.com/VTB-HACK-THANOS/hack-crypto/models"
 )
 
 type AuthService interface {

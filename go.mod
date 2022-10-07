@@ -1,4 +1,4 @@
-module github.com/anthonyaspen/emlvid-back
+module github.com/VTB-HACK-THANOS/hack-crypto
 
 go 1.19
 
