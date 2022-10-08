@@ -38,7 +38,7 @@ func (s *Server) handleUploadFile(ctx echo.Context) error {
 		Data: fileData,
 	}
 
-	if err := s.QuestionService.Insert(ctx.Request().Context(), file); err != nil {
+	if err := s.AssignmentService.Insert(ctx.Request().Context(), file); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
@@ -57,7 +57,7 @@ func (s *Server) handleQuestionList(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	tracks, err := s.QuestionService.Preview(ctx.Request().Context(), r.ContentType, r.Limit, r.Offset)
+	tracks, err := s.AssignmentService.Preview(ctx.Request().Context(), r.ContentType, r.Limit, r.Offset)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
@@ -80,7 +80,7 @@ func (s *Server) handleQuestionByID(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "uuid is nil or empty")
 	}
 
-	track, err := s.QuestionService.ByID(ctx.Request().Context(), r.ID)
+	track, err := s.AssignmentService.ByID(ctx.Request().Context(), r.ID)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
@@ -103,7 +103,7 @@ func (s *Server) handleDeleteFileByID(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "uuid is nil or empty")
 	}
 
-	if err := s.QuestionService.Delete(ctx.Request().Context(), r.ID); err != nil {
+	if err := s.AssignmentService.Delete(ctx.Request().Context(), r.ID); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 

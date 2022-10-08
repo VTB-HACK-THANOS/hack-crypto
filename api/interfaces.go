@@ -12,7 +12,7 @@ type AuthService interface {
 }
 
 type UserManagementService interface {
-	InsertWhiteList(ctx context.Context, email string) error
+	InsertWhiteList(ctx context.Context, email string, createdBy string) error
 	Roles(ctx context.Context) ([]*models.Role, error)
 	RegisterUser(context.Context, string, string) error
 	Balance(context.Context, string) (*models.Balance, error)
@@ -20,11 +20,14 @@ type UserManagementService interface {
 	History(ctx context.Context, username string, page, offset int, sort string) ([]*models.History, error)
 }
 
-type QuestionService interface {
+type AssignmentService interface {
 	Insert(context.Context, *models.Question) error
 	Preview(ctx context.Context, contentType string, limit, offset int) ([]*models.Question, error)
 	ByID(ctx context.Context, id uuid.UUID) (*models.Question, error)
 	Delete(ctx context.Context, id uuid.UUID) error
+
+	Tasks(ctx context.Context, username string) ([]*models.Task, error)
+	InsertTask(ctx context.Context, task *models.Task) (*models.Task, error)
 }
 
 type Logger interface {

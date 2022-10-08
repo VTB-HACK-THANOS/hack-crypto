@@ -69,3 +69,31 @@ func (s *Service) ByID(ctx context.Context, id uuid.UUID) (*models.Question, err
 func (s *Service) Delete(ctx context.Context, id uuid.UUID) error {
 	return errors.New("not implemented")
 }
+
+func (s *Service) Tasks(ctx context.Context, username string) ([]*models.Task, error) {
+	u, err := s.Store.User(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.Store.TasksByCreator(ctx, u.ManagerEmail)
+}
+
+func (s *Service) InsertTask(ctx context.Context, task *models.Task) (*models.Task, error) {
+	task.ID = uuid.New()
+
+	switch models.TaskType(task.Type) {
+	case models.EasyTask:
+	case models.MediumTask:
+	case models.HardTask:
+	default:
+		return nil, errors.New("not allowed type. Possible values: easy,medium,hard")
+	}
+
+	task, err := s.Store.InsertTask(ctx, task)
+	if err != nil {
+		return nil, err
+	}
+
+	return task, nil
+}

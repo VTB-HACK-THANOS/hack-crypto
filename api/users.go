@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/VTB-HACK-THANOS/hack-crypto/models"
@@ -23,7 +24,15 @@ func (s *Server) handleInsertWhiteList(ctx echo.Context) error {
 		return ctx.String(http.StatusBadRequest, "email is empty")
 	}
 
-	if err := s.UserManagementService.InsertWhiteList(ctx.Request().Context(), req.Email); err != nil {
+	createdBy, ok := ctx.Get(usernameCtx).(string)
+	if !ok {
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.New("failed to convert to strig"))
+	}
+	if createdBy == "" {
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.New("empty usernameCtx"))
+	}
+
+	if err := s.UserManagementService.InsertWhiteList(ctx.Request().Context(), req.Email, createdBy); err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
 	}
 
@@ -73,15 +82,15 @@ func (s *Server) handleRegistration(ctx echo.Context) error {
 func (s *Server) handleUserBalance(ctx echo.Context) error {
 	username, ok := ctx.Get(usernameCtx).(string)
 	if !ok {
-		echo.NewHTTPError(http.StatusInternalServerError, errors.New("failed to convert to strig"))
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.New("failed to convert to strig"))
 	}
 	if username == "" {
-		echo.NewHTTPError(http.StatusInternalServerError, errors.New("empty usernameCtx"))
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.New("empty usernameCtx"))
 	}
 
 	balance, err := s.UserManagementService.Balance(ctx.Request().Context(), username)
 	if err != nil {
-		echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	return ctx.JSON(http.StatusOK, balance)
@@ -96,18 +105,18 @@ func (s *Server) handleTransfer(ctx echo.Context) error {
 	var req Request
 
 	if err := ctx.Bind(&req); err != nil {
-		echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 	fromUser, ok := ctx.Get(usernameCtx).(string)
 	if !ok {
-		echo.NewHTTPError(http.StatusInternalServerError, errors.New("failed to convert to strig"))
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.New("failed to convert to strig"))
 	}
 	if fromUser == "" {
-		echo.NewHTTPError(http.StatusInternalServerError, errors.New("empty usernameCtx"))
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.New("empty usernameCtx"))
 	}
 
 	if err := s.UserManagementService.Transfer(ctx.Request().Context(), fromUser, req.ToUser, req.Amount); err != nil {
-		echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	return ctx.JSON(http.StatusOK, nil)
@@ -123,21 +132,67 @@ func (s *Server) handleUserHistory(ctx echo.Context) error {
 	var r Request
 
 	if err := ctx.Bind(&r); err != nil {
-		echo.NewHTTPError(http.StatusBadRequest, err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
 	user, ok := ctx.Get(usernameCtx).(string)
 	if !ok {
-		echo.NewHTTPError(http.StatusInternalServerError, errors.New("failed to convert to strig"))
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.New("failed to convert to strig"))
 	}
 	if user == "" {
-		echo.NewHTTPError(http.StatusInternalServerError, errors.New("empty usernameCtx"))
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.New("empty usernameCtx"))
 	}
 
 	history, err := s.UserManagementService.History(ctx.Request().Context(), user, r.Page, r.Offset, r.Sort)
 	if err != nil {
-		echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	return ctx.JSON(http.StatusOK, history)
+}
+
+// handleTasks returns list of tasks
+func (s *Server) handleTasks(ctx echo.Context) error {
+	user, ok := ctx.Get(usernameCtx).(string)
+	if !ok {
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.New("failed to convert to strig"))
+	}
+	if user == "" {
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.New("empty usernameCtx"))
+	}
+
+	resp, err := s.AssignmentService.Tasks(ctx.Request().Context(), user)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return ctx.JSON(http.StatusOK, resp)
+}
+
+func (s *Server) handleInsertTask(ctx echo.Context) error {
+	var t models.Task
+
+	if err := ctx.Bind(&t); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	user, ok := ctx.Get(usernameCtx).(string)
+	if !ok {
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.New("failed to convert to strig"))
+	}
+
+	if user == "" {
+		return echo.NewHTTPError(http.StatusInternalServerError, errors.New("empty usernameCtx"))
+	}
+
+	fmt.Println(t)
+	t.UserEmail = user
+
+	resp, err := s.AssignmentService.InsertTask(ctx.Request().Context(), &t)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	fmt.Println("Here")
+
+	return ctx.JSON(http.StatusOK, resp)
 }

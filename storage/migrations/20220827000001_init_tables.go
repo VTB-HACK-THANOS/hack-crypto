@@ -20,6 +20,7 @@ func init() {
 			job_title varchar(255),
             name varchar(255),
 			private_key text,
+			manager_email varchar(50),
 			public_key text
 			);
 

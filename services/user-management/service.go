@@ -27,12 +27,12 @@ func New(store Storage, cryptoWallet CryptoWallet) (*Service, error) {
 }
 
 // InsertWhiteList inserts new user in a white list.
-func (s *Service) InsertWhiteList(ctx context.Context, email string) error {
+func (s *Service) InsertWhiteList(ctx context.Context, email string, createdBy string) error {
 	if email == "" {
 		return errors.New("email is empty")
 	}
 
-	return s.store.UpsertUser(ctx, &models.User{Email: email})
+	return s.store.UpsertUser(ctx, &models.User{Email: email, ManagerEmail: createdBy})
 }
 
 // Roles returns list of roles.

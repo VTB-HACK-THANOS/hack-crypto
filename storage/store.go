@@ -79,3 +79,73 @@ func runInitCommand(db *bun.DB) (*migrate.Migrator, error) {
 	}
 	return migrator, nil
 }
+
+const (
+	ctxTransaction = "tx"
+)
+
+// Commit commits transaction, takes it from context.
+func (s *Storage) Commit(ctx context.Context) error {
+	tx, ok := ctx.Value(ctxTransaction).(*bun.Tx)
+	if !ok {
+		return errors.New("failed to get transaction from context")
+	}
+
+	return tx.Commit()
+}
+
+// Rollback rollbacks transaction, takes it from context.
+func (s *Storage) Rollback(ctx context.Context) error {
+	tx, ok := ctx.Value(ctxTransaction).(*bun.Tx)
+	if !ok {
+		return errors.New("failed to get transaction from context")
+	}
+
+	err := tx.Rollback()
+	if err != nil {
+		if errors.Is(err, sql.ErrTxDone) {
+			return nil
+		}
+		return err
+	}
+
+	return nil
+}
+
+// contextTransaction takes in context and check if ctx has a pointer to a transaction.
+// If it is - returns the transaction, otherwise creates new one.
+func (s *Storage) contextTransaction(ctx context.Context) (*bun.Tx, error) {
+	var (
+		tx  *bun.Tx
+		ok  bool
+		err error
+	)
+	tx, ok = ctx.Value(ctxTransaction).(*bun.Tx)
+	if !ok { // start a transaction if context doesn't have a pointer to tx.
+		tx, err = s.beginTx(ctx)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return tx, nil
+}
+
+// BeginTX returns pointer to a new tx.
+func (s *Storage) beginTx(ctx context.Context) (*bun.Tx, error) {
+	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{})
+	if err != nil {
+		return nil, err
+	}
+
+	return &tx, nil
+}
+
+// BeginTx takes in context, returns given context with a pointer to a transaction.
+func (s *Storage) BeginTx(ctx context.Context) (context.Context, error) {
+	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{})
+	if err != nil {
+		return nil, err
+	}
+	return context.WithValue(ctx, ctxTransaction, &tx), nil
+}
