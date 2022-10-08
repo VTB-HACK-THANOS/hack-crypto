@@ -75,19 +75,18 @@ func (s *Service) Balance(publicKey string) (*models.Balance, error) {
 		return nil, err
 	}
 
-	balance := &models.Balance{}
+	var balance models.Balance
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := json.Unmarshal(body, balance); err != nil {
+	if err := json.Unmarshal(body, &balance); err != nil {
 		return nil, err
 	}
 
-	return balance, nil
-
+	return &balance, nil
 }
 
 func (s *Service) Transfer(fromPrivateKey, toPublicKey string, amount float64) error {
@@ -169,8 +168,8 @@ func (s *Service) History(ctx context.Context, publicKey string, page, offset in
 		return nil, err
 	}
 
-	history := &Response{}
-	if err := json.Unmarshal(body, history); err != nil {
+	var history Response
+	if err := json.Unmarshal(body, &history); err != nil {
 		return nil, err
 	}
 

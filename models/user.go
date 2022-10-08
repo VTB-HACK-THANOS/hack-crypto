@@ -20,7 +20,7 @@ type User struct {
 }
 
 type Balance struct {
-	RublesAmount float64 ` json:"rublesAmount"`
+	RublesAmount float64 ` json:"coinsAmount"`
 	MaticAmount  float64 `json:"maticAmount"`
 }
 
