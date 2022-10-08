@@ -18,7 +18,7 @@ func (s *Server) setupRoutes(e *echo.Echo, rlCfg middleware.RateLimiterConfig) {
 
 	v1.GET("/wallets/balance", s.handleUserBalance)
 	v1.GET("/wallets/history", s.handleUserHistory)
-	v1.POST("/transfer/:name", s.handleTransfer)
+	v1.POST("/transfer/crypto-rubles", s.handleTransfer)
 	v1.GET("/questions", s.handleQuestionList)
 	v1.GET("/questions/:id", s.handleQuestionByID)
 

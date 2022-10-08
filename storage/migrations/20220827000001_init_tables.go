@@ -47,7 +47,7 @@ func init() {
 					            ON DELETE CASCADE
 					            ON UPDATE CASCADE;			           
 
-			INSERT INTO public.users (email, "password", job_title, "name") VALUES('tester@test.ru', '$2a$04$oLlN7LTjl8ftPmzq0EXSPugUez7MGPEWJWs0Fnjf1xLQlokmpIs1S', NULL, NULL);
+     INSERT INTO users (email, "password", job_title, "name", private_key, public_key) VALUES('tester@test.ru', '$2a$04$oLlN7LTjl8ftPmzq0EXSPugUez7MGPEWJWs0Fnjf1xLQlokmpIs1S', NULL, NULL, '522b4f5a783d3346a7024f322cb3d0058e7e02fc0d92b9810eb4436724f1ea6f', '0xf910Ec96fB8bD87a97b4D7A8351144912A239d45');
 
 			INSERT INTO public.roles (id, "name") VALUES(1, 'user');
       INSERT INTO public.roles (id, "name") VALUES(2, 'manager');
