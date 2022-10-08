@@ -18,7 +18,9 @@ func init() {
 			email VARCHAR(50) PRIMARY KEY,
 			password TEXT NOT null,
 			job_title varchar(255),
-            name varchar(255)
+            name varchar(255),
+			private_key text,
+			public_key text
 			);
 
 			CREATE TABLE roles (
@@ -52,6 +54,18 @@ func init() {
       INSERT INTO public.roles (id, "name") VALUES(3, 'admin');
 
 			INSERT INTO public.user_roles (user_email, role_id) VALUES('tester@test.ru', 2);
+
+
+			CREATE TABLE questions (
+			id uuid PRIMARY KEY,
+			name varchar(500),
+			text TEXT,
+			content_type varchar(100),
+			data bytea NOT NULL,
+			created_by text, 
+			updated_by text
+			);
+
      `)
 		return err
 	}, func(ctx context.Context, db *bun.DB) error {

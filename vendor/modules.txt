@@ -25,6 +25,9 @@ github.com/golobby/dotenv/pkg/decoder
 # github.com/golobby/env/v2 v2.2.0
 ## explicit; go 1.11
 github.com/golobby/env/v2
+# github.com/google/uuid v1.3.0
+## explicit
+github.com/google/uuid
 # github.com/jinzhu/inflection v1.0.0
 ## explicit
 github.com/jinzhu/inflection

@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/golobby/config/v3 v3.4.1
+	github.com/google/uuid v1.3.0
 	github.com/labstack/echo/v4 v4.8.0
 	github.com/stretchr/testify v1.7.0
 	github.com/uptrace/bun v1.1.7

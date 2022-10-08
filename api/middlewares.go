@@ -10,6 +10,7 @@ import (
 
 const (
 	userAccessWritesCtx = "user_access_writes"
+	usernameCtx         = "username_ctx"
 )
 
 // verifyToken verifies token by trying verifyAuthorization() and verifyCookie() methods.
@@ -34,6 +35,7 @@ func verifyAuth(auth AuthService) echo.MiddlewareFunc {
 			}
 
 			ctx.Set(userAccessWritesCtx, userAccessWrites)
+			ctx.Set(usernameCtx, login)
 
 			return next(ctx)
 		}

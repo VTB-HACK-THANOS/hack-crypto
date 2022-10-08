@@ -16,9 +16,17 @@ func (s *Server) setupRoutes(e *echo.Echo, rlCfg middleware.RateLimiterConfig) {
 	// v1
 	v1 := api.Group("/v1", verifyAuth(s.AuthService))
 
+	v1.GET("/wallets/balance", s.handleUserBalance)
+	v1.GET("/wallets/history", s.handleUserHistory)
+	v1.POST("/transfer/:name", s.handleTransfer)
+	v1.GET("/questions", s.handleQuestionList)
+	v1.GET("/questions/:id", s.handleQuestionByID)
+
 	// admin endpoints
 	admin := v1.Group("/admin", verifyUserAccessWrites(models.PrivilegedUser))
 	// add new user in a whitelist
 	admin.POST("/white-list", s.handleInsertWhiteList)
 
+	admin.POST("/files", s.handleUploadFile)
+	admin.DELETE("/files/:id", s.handleDeleteFileByID)
 }

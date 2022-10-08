@@ -7,6 +7,8 @@ postgres:
   user: postgres
   pass: postgres
   pool: 10
+cryptoWallet:
+  endpoint: https://hackathon.lsp.team/hk
 rateLimiter:
   rate: 1s
   burst: 1

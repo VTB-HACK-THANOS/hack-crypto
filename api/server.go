@@ -16,6 +16,7 @@ type Server struct {
 	AuthService           AuthService
 	UserManagementService UserManagementService
 	rlCfg                 middleware.RateLimiterConfig
+	QuestionService       QuestionService
 }
 
 const (
@@ -25,6 +26,7 @@ const (
 func New(
 	authService AuthService,
 	userManagementService UserManagementService,
+	FileService QuestionService,
 	rlRate, rlExpiresIn time.Duration,
 	rlBurst int,
 ) *Server {
@@ -36,6 +38,7 @@ func New(
 		e:                     e,
 		AuthService:           authService,
 		UserManagementService: userManagementService,
+		QuestionService:       FileService,
 	}
 
 	s.setupRoutes(e, setupRateLimiter(rlRate, rlExpiresIn, rlBurst))

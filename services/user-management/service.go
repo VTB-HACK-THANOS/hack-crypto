@@ -9,15 +9,19 @@ import (
 )
 
 const (
-	regularUserID = 2
+	regularUserID = 1
 )
 
 type Service struct {
-	store Storage
+	store        Storage
+	CryptoWallet CryptoWallet
 }
 
-func New(store Storage) (*Service, error) {
-	s := &Service{store: store}
+func New(store Storage, cryptoWallet CryptoWallet) (*Service, error) {
+	s := &Service{
+		store:        store,
+		CryptoWallet: cryptoWallet,
+	}
 
 	return s, nil
 }
@@ -60,9 +64,68 @@ func (s *Service) RegisterUser(ctx context.Context, email, password string) erro
 		},
 	}
 
+	wallet, err := s.CryptoWallet.CreateWallet()
+	if err != nil {
+		return err
+	}
+
+	//TODO transaction
+	user.WalletCredentials.PrivateKey = wallet.PrivateKey
+	user.WalletCredentials.PublicKey = wallet.PublicKey
+
 	if err := s.store.UpsertUser(ctx, user); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+// Balance returns user's balance.
+func (s *Service) Balance(ctx context.Context, username string) (*models.Balance, error) {
+	u, err := s.store.User(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+
+	balance, err := s.CryptoWallet.Balance(u.WalletCredentials.PublicKey)
+	if err != nil {
+		return nil, err
+	}
+	return balance, nil
+}
+
+func (s *Service) Transfer(ctx context.Context, from, to string, amount float64) error {
+	fromUser, err := s.store.User(ctx, from)
+	if err != nil {
+		return err
+	}
+
+	toUser, err := s.store.User(ctx, to)
+	if err != nil {
+		return err
+	}
+
+	if err := s.CryptoWallet.Transfer(
+		fromUser.WalletCredentials.PrivateKey,
+		toUser.WalletCredentials.PublicKey,
+		amount,
+	); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) History(ctx context.Context, username string, page, offset int, sort string) ([]*models.History, error) {
+	u, err := s.store.User(ctx, username)
+	if err != nil {
+		return nil, err
+	}
+
+	history, err := s.CryptoWallet.History(ctx, u.PublicKey, page, offset, sort)
+	if err != nil {
+		return nil, err
+	}
+
+	return history, nil
 }

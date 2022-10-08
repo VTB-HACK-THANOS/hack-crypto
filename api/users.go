@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/VTB-HACK-THANOS/hack-crypto/models"
@@ -66,4 +67,77 @@ func (s *Server) handleRegistration(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, nil)
+}
+
+// handleUserBalance return user balance.
+func (s *Server) handleUserBalance(ctx echo.Context) error {
+	username, ok := ctx.Get(usernameCtx).(string)
+	if !ok {
+		echo.NewHTTPError(http.StatusInternalServerError, errors.New("failed to convert to strig"))
+	}
+	if username == "" {
+		echo.NewHTTPError(http.StatusInternalServerError, errors.New("empty usernameCtx"))
+	}
+
+	balance, err := s.UserManagementService.Balance(ctx.Request().Context(), username)
+	if err != nil {
+		echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return ctx.JSON(http.StatusOK, balance)
+}
+
+// handleTransfer transfers currency to another user.
+func (s *Server) handleTransfer(ctx echo.Context) error {
+	type Request struct {
+		ToUser string  `json:"to_user"`
+		Amount float64 `json:"amount"`
+	}
+	var req Request
+
+	if err := ctx.Bind(&req); err != nil {
+		echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+	fromUser, ok := ctx.Get(usernameCtx).(string)
+	if !ok {
+		echo.NewHTTPError(http.StatusInternalServerError, errors.New("failed to convert to strig"))
+	}
+	if fromUser == "" {
+		echo.NewHTTPError(http.StatusInternalServerError, errors.New("empty usernameCtx"))
+	}
+
+	if err := s.UserManagementService.Transfer(ctx.Request().Context(), fromUser, req.ToUser, req.Amount); err != nil {
+		echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return ctx.JSON(http.StatusOK, nil)
+}
+
+// handleUserHistory returns user's transactions history
+func (s *Server) handleUserHistory(ctx echo.Context) error {
+	type Request struct {
+		Page   int
+		Offset int
+		Sort   string
+	}
+	var r Request
+
+	if err := ctx.Bind(&r); err != nil {
+		echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	user, ok := ctx.Get(usernameCtx).(string)
+	if !ok {
+		echo.NewHTTPError(http.StatusInternalServerError, errors.New("failed to convert to strig"))
+	}
+	if user == "" {
+		echo.NewHTTPError(http.StatusInternalServerError, errors.New("empty usernameCtx"))
+	}
+
+	history, err := s.UserManagementService.History(ctx.Request().Context(), user, r.Page, r.Offset, r.Sort)
+	if err != nil {
+		echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	return ctx.JSON(http.StatusOK, history)
 }
